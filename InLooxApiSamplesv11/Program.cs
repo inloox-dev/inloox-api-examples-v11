@@ -1,11 +1,11 @@
-﻿using InLooxApiSamplesv11.Models;
+﻿using InLoox.PM.Domain.Model.Aggregates.Api;
 using Simple.OData.Client;
 
 var EndPoint = new Uri("https://app.inloox.com");
 var EndPointOdata = new Uri(EndPoint, "/api/odata/");
 
 //if you´re using InLoox OnPrem please use the following schema for the Endpoint
-//var EndPoint = new Uri("https://YOUR-ON-PREM-URL.com/");
+//var EndPoint = new Uri("https://YOUR-ON-PREM-URL/");
 //var EndPointOdata = new Uri(EndPoint, "/api/v1/odata/");
 
 // this is just a simple sample. Token shouldn´t be saved in source code. E.g. use appsettings or (better) Azure Key Vault
@@ -37,29 +37,60 @@ await CreateTimeEntry(projects.First().ProjectId, "Sample Time", DateTime.Now);
 var project = projects.First();
 await UpdateProjectName(project.ProjectId, project.Name + " updated");
 
-async Task UpdateProjectName(Guid projectId, string newName)
+
+// example 1
+async Task<ApiAccountInfo> GetAccountInfo()
 {
     if (client == null)
         throw new InvalidOperationException("Initialize client first");
 
-    var project = new Project()
-    {
-        Name = newName
-    };
-
-    await client.For<Project>().Key(projectId).Set(new { project.Name }).UpdateEntryAsync();
+    return await client.For<ApiAccountInfo>("AccountInfo").FindEntryAsync();
 }
 
-async Task<IEnumerable<Project>> GetProjects()
+
+// example 2
+async Task<IEnumerable<ApiProject>> GetProjects()
 {
     // this will only return the first 100 projects
-    // for paging see sample 3
+    // for paging and filtering see sample 3
     if (client == null)
         throw new InvalidOperationException("Initialize client first");
 
-    return await client.For<Project>("Project").FindEntriesAsync();
+    return await client.For<ApiProject>("Project").FindEntriesAsync();
 }
 
+
+// example 3
+async Task<List<ApiDynamicTimeEntry>> GetAllTimeEntriesForMonth(DateTime month, Action<string> loadedFunc)
+{
+    if (client == null)
+        throw new InvalidOperationException("Initialize client first");
+
+    var filterStart = new DateTime(month.Year, month.Month, 1);
+    var filterEnd = new DateTime(month.Year, month.Month, 1).AddMonths(1);
+
+    var annotations = new ODataFeedAnnotations();
+    var timeentries = (await client.For<ApiDynamicTimeEntry>("DynamicTimeEntry")
+        .Filter(k =>
+            k.TimeEntry_StartDateTime > filterStart &&
+            k.TimeEntry_EndDateTime < filterEnd
+        )
+        .FindEntriesAsync(annotations)).ToList();
+
+    while (annotations.NextPageLink != null)
+    {
+        timeentries.AddRange(await client
+            .For<ApiDynamicTimeEntry>("DynamicTimeEntry")
+            .FindEntriesAsync(annotations.NextPageLink, annotations));
+
+        loadedFunc($"Loaded {timeentries.Count()} entries");
+    }
+
+    return timeentries;
+}
+
+
+// example 4
 async Task CreateTimeEntry(Guid projectId, string name, DateTime start)
 {
     if (client == null)
@@ -76,38 +107,17 @@ async Task CreateTimeEntry(Guid projectId, string name, DateTime start)
     var res = await client.InsertEntryAsync("TimeEntry", values);
 }
 
-async Task<AccountInfo> GetAccountInfo()
+
+// example 5
+async Task UpdateProjectName(Guid projectId, string newName)
 {
     if (client == null)
         throw new InvalidOperationException("Initialize client first");
 
-    return await client.For<AccountInfo>("AccountInfo").FindEntryAsync();
-}
-
-async Task<List<DynamicTimeEntry>> GetAllTimeEntriesForMonth(DateTime month, Action<string> loadedFunc)
-{
-    if (client == null)
-        throw new InvalidOperationException("Initialize client first");
-
-    var filterStart = new DateTime(month.Year, month.Month, 1);
-    var filterEnd = new DateTime(month.Year, month.Month, 1).AddMonths(1);
-
-    var annotations = new ODataFeedAnnotations();
-    var timeentries = (await client.For<DynamicTimeEntry>("DynamicTimeEntry")
-        .Filter(k =>
-            k.TimeEntry_StartDateTime > filterStart &&
-            k.TimeEntry_EndDateTime < filterEnd
-        )
-        .FindEntriesAsync(annotations)).ToList();
-
-    while (annotations.NextPageLink != null)
+    var project = new ApiProject()
     {
-        timeentries.AddRange(await client
-            .For<DynamicTimeEntry>("DynamicTimeEntry")
-            .FindEntriesAsync(annotations.NextPageLink, annotations));
+        Name = newName
+    };
 
-        loadedFunc($"Loaded {timeentries.Count()} entries");
-    }
-
-    return timeentries;
+    await client.For<ApiProject>().Key(projectId).Set(new { project.Name }).UpdateEntryAsync();
 }

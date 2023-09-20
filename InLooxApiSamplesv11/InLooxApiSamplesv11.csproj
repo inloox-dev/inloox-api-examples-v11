@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="InLoox.PM.Domain.Model.Public" Version="11.0.0" />
     <PackageReference Include="Microsoft.OData.Core" Version="7.18.0" />
     <PackageReference Include="Simple.OData.Client" Version="6.0.1" />
   </ItemGroup>
