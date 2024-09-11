@@ -17,10 +17,10 @@ The API Token can be provided in the HTTP Header. Key: 'x-api-key' Value: YOUR_P
 The referenced NugetPackage (https://www.nuget.org/packages/InLoox.PM.Domain.Model.Public/) contains models for all relevant entites.
 
 ## Custom fields
-Retrieval of custom fields values is also possible for Project, TaskItem, Budget, LineItem and TimeEntry currently. Therefor use the ODataEndpoints:
+Retrieval of custom fields values is also possible for Project, TaskItem, Budget, LineItem and TimeEntry currently. Therefore use the ODataEndpoints:
 DynamicProject, DynamicTaskItem, DynamicBudget, DynamicLineItem, DynamicTimeEntry
 To retrieve the custom field values you need to extend the Custom\*.cs files in the Models subfolder.
 
 ## Paging and filtering
-By default the InLoox ODATA API returns 100 elements per API call. To implement paging see example example 3 in program.cs.
+By default the InLoox ODATA API returns 100 elements per API call. To implement paging see example 3 in program.cs.
 Filtering is also explained in this example.
