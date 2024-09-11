@@ -18,7 +18,8 @@ The referenced NugetPackage (https://www.nuget.org/packages/InLoox.PM.Domain.Mod
 
 ## Custom fields
 Retrieval of custom fields values is also possible for Project, TaskItem, Budget, LineItem and TimeEntry currently. Therefore use the ODataEndpoints:
-DynamicProject, DynamicTaskItem, DynamicBudget, DynamicLineItem, DynamicTimeEntry
+DynamicProject, DynamicTaskItem, DynamicBudget, DynamicLineItem, DynamicTimeEntry.
+
 To retrieve the custom field values you need to extend the Custom\*.cs files in the Models subfolder.
 
 ## Paging and filtering
