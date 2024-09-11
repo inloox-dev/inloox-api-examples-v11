@@ -2,13 +2,13 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="InLoox.PM.Domain.Model.Public" Version="11.0.0" />
+    <PackageReference Include="InLoox.PM.Domain.Model.Public" Version="11.0.1" />
     <PackageReference Include="Microsoft.OData.Core" Version="7.18.0" />
     <PackageReference Include="Simple.OData.Client" Version="6.0.1" />
   </ItemGroup>
