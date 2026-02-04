@@ -2,7 +2,7 @@
 
 ## Start
 Some very simple samples to use the InLoox OData API for InLoox 11 and 12 (Cloud & OnPrem). For start see:
-https://github.com/inloox-dev/inloox-api-examples-current/blob/main/InLooxApiSamplesv11/Program.cs
+https://github.com/inlooxgroup/inloox-api-examples-current/blob/main/InLooxApiSamplesv11/Program.cs
 
 ## OData specification
 InLoox Odata specification is available via SWAGGER
